@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线翻译器</title>
+    <!-- 样式库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: '黑体', Arial;
+        }
+        /* body内容样式 */
+        body {
+            /* 弹性布局 */
+            display: flex;
+            /* 垂直居中 */
+            align-items: center;
+            /* 水平居中 */
+            justify-content: center;
+            /* 上下0内边距,左右10px内边距 */
+            padding: 0 10px;
+            /* 最小高度 */
+            min-height: 100vh;
+            background: black;
+        }
+        /* 容器样式 */
+        .container {
+            /* 最大宽度 */
+            width: 690px;
+            padding: 30px;
+            background: white;
+            /* 圆角 */
+            border-radius: 7px;
+        }
+
+        .wrapper {
+            /* 圆角 */
+            border-radius: 5px;
+            /* 边框样式 */
+            border: 1px solid #ccc;
+        }
+
+        .wrapper .text-input {
+            /* 弹性布局 */
+            display: flex;
+            /* 下边框样式 */
+            border-bottom: 1px solid #ccc;
+        }
+
+        .text-input .to-text  {
+            border-left: 1px solid #ccc;
+        }
+
+        .text-input textarea {
+            height: 250px;
+            width: 100%;
+            border: none;
+            /* 禁止选中文本 */
+            outline: none;
+            /* 禁止调整大小 */
+            resize: none;
+            /* 背景色 */
+            background: none;
+            /* 字体大小 */
+            font-size: 18px;
+            /* 内边距 上下10 左右15 */
+            padding: 10px 15px;
+            /* 圆角 */
+            border-radius: 5px;
+        }
+        /* textarea提示文字样式 */
+        .text-input textarea::placeholder {
+            color: rgb(137, 137, 137);
+        }
+        /* 无序列表、li标签和字体图标样式 */
+        .controls,
+        li,
+        .icons,
+        .icons i {
+            /* 弹性布局 */
+            display: flex;
+            /* 垂直居中 */
+            align-items: center;
+            /* 平分中间空余的地方 */
+            justify-content: space-between;
+        }
+        /* 无序列表样式 */
+        .controls {
+            /* 清除列表样式 */
+            list-style: none;
+            /* 内边距 上下12 左右15 */
+            padding: 12px 15px;
+        }
+        /* 字体图标盒子宽度 */
+        .controls .row .icons {
+            width: 38%;
+        }
+        /* 字体图标样式 */
+        .controls .row .icons i {
+            /* 大小 */
+            width: 50px;
+            color: #adadad;
+            font-size: 14px;
+            /* 鼠标悬停时的样式 */
+            cursor: pointer;
+            /* 水平居中 */
+            justify-content: center;
+        }
+        /* 左边字体图标盒子 */
+        .controls .row.from .icons {
+            /* 右边距15px */
+            padding-right: 15px;
+            /* 右边框样式 */
+            border-right: 1px solid #ccc;
+        }
+        /* 右边字体图标盒子 */
+        .controls .row.to .icons {
+            /* 左边距15px */
+            padding-left: 15px;
+            /* 左边框样式 */
+            border-left: 1px solid #ccc;
+        }
+        /* 下拉框样式 */
+        .controls .row select {
+            color: #333;
+            /* 清楚边框样式 */
+            border: none;
+            /* 清楚选中样式 */
+            outline: none;
+            /* 字体大小 */
+            font-size: 18px;
+            /* 清除背景 */
+            background: none;
+            /* 左内边距 */
+            padding-left: 5px;
+        }
+        /* textarea滚动条样式 */
+        .text-input textarea::-webkit-scrollbar {
+            width: 4px;
+        }
+        /* 下拉列表滚动条样式 */
+        .controls .row select::-webkit-scrollbar {
+            width: 8px;
+        }
+        /* 滚动条滑块样式 */
+        .text-input textarea::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 8px;
+        }
+        /* 字体图标点击时的样式 */
+        .controls .exchange {
+            color: #adadad;
+            /* 手指光标 */
+            cursor: pointer;
+            font-size: 16px;
+            /* 过度动画 */
+            transition: transform 0.05s ease;
+            -webkit-transition: transform 0.05s ease;
+            -moz-transition: transform 0.05s ease;
+            -ms-transition: transform 0.05s ease;
+            -o-transition: transform 0.05s ease;
+        }
+        /* 字体图标点击时的动画 */
+        .controls i:active {
+            transform: scale(0.9);
+        }
+        /* 按钮样式 */
+        .container button {
+            width: 100%;
+            padding: 14px;
+            /* 清空选中后的样式 */
+            outline: none;
+            /* 清空边框 */
+            border: none;
+            color: #fff;
+            /* 手指光标 */
+            cursor: pointer;
+            /* 上外边距 */
+            margin-top: 20px;
+            font-size: 17px;
+            /* 圆角 */
+            border-radius: 5px;
+            background: #5372F0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 最大容器 -->
+    <div class="container">
+        <!-- 子容器 -->
+        <div class="wrapper">
+            <!-- 输入框 -->
+            <div class="text-input">
+                <!-- 需要翻译的文本 -->
+                <textarea class="from-text" placeholder="输入要翻译的内容"></textarea>
+                <!-- 翻译结果文本 -->
+                <textarea readonly disabled class="to-text" placeholder="翻译结果"></textarea>
+                <!-- disabled 不可聚焦 -->
+                <!-- readonly 不可编辑 -->
+            </div>
+            <!-- 无序列表 -->
+            <ul class="controls">
+                <!-- 待翻译部分 -->
+                <li class="row from">
+                    <!-- 字体图标盒子 -->
+                    <div class="icons">
+                        <!-- 字体图标 -->
+                        <i id="from" class="fas fa-volume-up"></i>
+                    </div>
+                    <!-- 下拉列表 -->
+                    <select></select>
+                </li>
+                <!-- 交换图标 -->
+                <li class="exchange"><i class="fas fa-exchange-alt"></i></li>
+                <!-- 翻译部分 -->
+                <li class="row to">
+                    <!-- 下拉列表 -->
+                    <select></select>
+                    <!-- 字体图标盒子 -->
+                    <div class="icons">
+                        <!-- 字体图标 -->
+                        <i id="to" class="fas fa-volume-up"></i>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- 翻译按钮 -->
+        <button>翻译</button>
+    </div>
+</body>
+<script>
+    // 获取国家语言列表
+    const countries = {
+        "zh": "	Chinese",
+        "de-DE": "German",
+        "en-GB": "English",
+        "es-ES": "Spanish",
+        "it-IT": "Italian",
+        "ja-JP": "Japanese",
+        "la-VA": "Latin",
+        "ru-RU": "Russian",
+    }
+         //待翻译的文本元素
+        const fromText = document.querySelector(".from-text"),
+        //翻译出来的文本元素
+        toText = document.querySelector(".to-text"),
+        //朗读字体图标
+        exchageIcon = document.querySelector(".exchange"),
+        //下拉列表元素
+        selectTag = document.querySelectorAll("select"),
+        //字体图标元素
+        icons = document.querySelectorAll(".row i");
+        //按钮元素
+        translateBtn = document.querySelector("button"),
+        // 遍历下拉列表
+        selectTag.forEach((tag, id) => {
+            // 循环对比国家语言
+            for (let country_code in countries) {
+                // 三元运算符对比
+                let selected = id == 0 ? country_code == "zh" ? "selected" : "" : country_code == "en-GB" ? "selected" : "";
+                // 模板字符串
+                let option = `<option ${selected} value="${country_code}">${countries[country_code]}</option>`;
+                // 插入到下拉列表中
+                tag.insertAdjacentHTML("beforeend", option);
+
+            }
+        });
+    // 监听字体图标点击
+    exchageIcon.addEventListener("click", () => {
+        // 获取待翻译文本元素值
+        let tempText = fromText.value,
+        // 获取待翻译下拉列表元素值
+            tempLang = selectTag[0].value;
+        // 将待翻译文本元素值赋值给翻译文本元素值
+        fromText.value = toText.value;
+        // 将翻译文本元素值赋值给待翻译文本元素值
+        toText.value = tempText;
+        // 把翻译的下拉列表中的值赋给待翻译的下拉列表值
+        selectTag[0].value = selectTag[1].value;
+        //把上面获取到的待翻译值赋给翻译的下拉列表值
+        selectTag[1].value = tempLang;
+    });
+    //监听翻译按钮点击
+    translateBtn.addEventListener("click", () => {
+        //获取待翻译元素的值并去掉前后空格
+        let text = fromText.value.trim(),
+        // 获取待翻译的下拉列表元素值
+            translateFrom = selectTag[0].value,
+        // 获取翻译的下拉列表元素值
+            translateTo = selectTag[1].value;
+        //判断是否为空
+        if (!text) return;
+        // 获取翻译接口
+        // https://api.mymemory.translated.net/get?q=hello&langpair=en|zh
+        let apiUrl = `https://api.mymemory.translated.net/get?q=${text}&langpair=${translateFrom}|${translateTo}`;
+        //发送网络请求返回json数据
+        fetch(apiUrl).then(res => res.json()).then(data => {
+            //将返回的数据显示在翻译的元素中
+            toText.value = data.responseData.translatedText;
+            //遍历翻译结果中的id
+            data.matches.forEach(data => {
+                //如果等于0就替换
+                if (data.id === 0) {
+                    toText.value = data.translation;
+                }
+            });
+        });
+    });
+        //遍历字体图标
+    icons.forEach(icon => {
+        //监听字体图标点击
+    icon.addEventListener("click", ({ target }) => {
+        //判断是否为空，如果为空直接返回不朗读
+        if (!fromText.value || !toText.value) return;
+        //声明一个叫utterance的变量
+        let utterance;
+        //判断是否朗读的是字体图标的类
+        if (target.classList.contains("fa-volume-up")) {
+            //判断是哪个字体图标
+            //待翻译字体图标id
+            if (target.id == "from") {
+                //把utterance变成一个对象(创建一个对象赋给utterance)
+                utterance = new SpeechSynthesisUtterance(fromText.value);
+                //获取需要朗读的语言值（来自下拉列表）
+                utterance.lang = selectTag[0].value;
+            //否则朗读翻译的字体图标
+            } else {
+                //把utterance变成一个对象(创建一个对象赋给utterance)
+                utterance = new SpeechSynthesisUtterance(toText.value);
+                //获取需要朗读的语言值（来自下拉列表）
+                utterance.lang = selectTag[1].value;
+            }
+            //朗读utterance变量的值
+            speechSynthesis.speak(utterance);
+            console.log(utterance);
+        }
+    });
+});
+</script>
+
+</html>
